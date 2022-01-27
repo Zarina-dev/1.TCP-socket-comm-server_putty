@@ -27,5 +27,6 @@ when you input some word, server sends that word again.
 ex: in: Zarina --> out: Zarina!
 
 
-![TCP-server-putty](https://user-images.githubusercontent.com/61898376/151284787-dde69d8c-74f4-488c-9e10-6e0721aff050.png)
+
+![tcp-putty - execution](https://user-images.githubusercontent.com/61898376/151289667-27fcd97a-a01c-43ce-88df-3cb1418184dd.png)
 
