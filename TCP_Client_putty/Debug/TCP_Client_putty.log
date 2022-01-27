@@ -1,0 +1,3 @@
+﻿  main.cpp
+c:\users\comesta\source\repos\tcp_client_putty\tcp_client_putty\main.cpp(11): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+  TCP_Client_putty.vcxproj -> C:\Users\comesta\source\repos\TCP_Client_putty\Debug\TCP_Client_putty.exe
