@@ -4,6 +4,12 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
+#include <iostream>
+#include <string>
+#include <WS2tcpip.h>
+
+#pragma comment(lib, "ws2_32.lib")
+
 using namespace std;
 
 #define PORT 5400
@@ -12,7 +18,7 @@ void main()
 	// initialize winsock
 	WSADATA wsData;
 	int wsOk = WSAStartup(MAKEWORD(2, 2), &wsData);   //MAKEWORD(2, 2) : socket version
-	if (wsOk != 0)      //wsOk == 0ÀÌ¿©¾ß ÃÊ±âÈ­°¡ µÊ 
+	if (wsOk != 0)      //wsOk == 0ì´ì—¬ì•¼ ì´ˆê¸°í™”ê°€ ë¨ 
 	{
 		cerr << "Can not initialize winsock! Quitting.." << endl;
 		return;
@@ -33,23 +39,23 @@ void main()
 
 	   
 	// bind the ip add and port to a socket
-	sockaddr_in hint;			 // hint = contains socket address, port, address Á¾·ù
+	sockaddr_in hint;			 // hint = contains socket address, port, address ì¢…ë¥˜
 	hint.sin_family = AF_INET;   // IPv4
 	hint.sin_port = htons(PORT); // port
-	hint.sin_addr.s_addr = INADDR_ANY;  // my computer's IP [I'm using "my comp" as a server] can be used   -> inet_pton 
+	hint.sin_addr.s_addr = INADDR_ANY;  // my computer's IP [I'm using "my comp" as a server], can be used   -> inet_pton 
 
 
-	//    listening ¼ÒÄÏÀ»    hint¿¡ ÀÖ´Â Á¤º¸¿Í binding ÇÏ°í ½Í´Ù
+	//    listening ì†Œì¼“ì„    hintì— ìˆëŠ” ì •ë³´ì™€ binding í•˜ê³  ì‹¶ë‹¤
 	bind(  listening,     (sockaddr*)&hint,    sizeof(hint));
 
 
 
 	//tell winsock the socket is for listening 
-	listen(listening, SOMAXCONN);  // SOMAXCONN : maximum connection num [ ÇÑ²¨¹ø¿¡ ¿äÃ» °¡´ÉÇÑ ÃÖ´ë Á¢¼Û½ÂÀÎ ¼ö ]
+	listen(listening, SOMAXCONN);  // SOMAXCONN : maximum connection num [ í•œêº¼ë²ˆì— ìš”ì²­ ê°€ëŠ¥í•œ ìµœëŒ€ ì ‘ì†¡ìŠ¹ì¸ ìˆ˜ ]
 	
 
 
-	/*------------------------ server setted up! client ´ë±â Áß ------------------------*/
+	/*------------------------ server setted up! client ëŒ€ê¸° ì¤‘ ------------------------*/
 	
 
 	//wait for a connection
@@ -65,9 +71,9 @@ void main()
 		cerr << "client Socket is invalid. " << endl;
 		return;
 	}
+	
 
-
-
+	/*---------------------- get client info and port num which is client connected to------------*/
 
 	char host[NI_MAXHOST];  	// client's remote name  // NI_MAXHOST 1025 - max size of fully qualified domain name
 	char service[NI_MAXHOST];   // service (i.e port) the client is connect on
@@ -83,23 +89,30 @@ void main()
 		inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
 		cout << "84 - " << host << " connected on port " << ntohs(client.sin_port) << endl;
 	}
+	/*	getnameinfo func - 
+		~  host ĞºĞ¾ ì ‘ì†í•˜ê³ ì í•˜ëŠ” computerì˜ ì´ë¦„ì„ ì €ì¥
+		           service ĞºĞµ ì ‘ì†í•  ì†Œì¼“ì— ëœë¤ìœ¼ë¡œ ì£¼ì–´ì§„ í¬íŠ¸ë²ˆí˜¸ë¥¼ ì €ì¥..
+			   
+		--> ë§Œì¼ ë‹¤ ëœë‹¤ë©´ returns 0 == succeed :   80 - LAPTOP_name connected on port 2275
+	*/
 
 
 
 
-
-	//cloase listening socket
+	//close listening socket
 	closesocket(listening);
 
-	//while loop: accept and exho msg back to client
+
+
+	//while loop: accept and echo msg back to client
 	char buf[4096];
 	while (true)
 	{
-		ZeroMemory(buf, 4096);    // buf¸¦ 4096°³ 0·Î Ã¤¿ö 
+		ZeroMemory(buf, 4096);    // bufë¥¼ 4096ê°œ 0ë¡œ ì±„ì›Œ 
 	
 		// wait for client to 
 		int bytesReceived = recv(clientSocket, buf, 4096, 0);
-		cout << "92 - byteReceived : " << bytesReceived << endl;  // ÀÔ·ÂµÈ µ¥ÀÌÅÍ Å©±â EX: buf is char, ÀÔ·Â: zarina => 6letters x 1byte = 6 ==> returns 6
+		cout << "92 - byteReceived : " << bytesReceived << endl;  // ì…ë ¥ëœ ë°ì´í„° í¬ê¸° EX: buf is char, ì…ë ¥: zarina => 6letters x 1byte = 6 ==> returns 6
 
 		if (bytesReceived == SOCKET_ERROR)
 		{
@@ -115,6 +128,16 @@ void main()
 		// echo message back to client
 		send(clientSocket, buf, bytesReceived + 1, 0);
 
+
+
+		/*
+			recv func - 
+			puts received data to the buf, then returns  byte size of that received data
+
+					ex: received data == input data : "Zarina"  --> buf = Hello
+															 	    return = 5 bytes
+					      (echo ) send - clientSocketìœ¼ë¡œ bufë‚´ìš©ì„ ì „ì†¡í•˜ë¼
+		*/
 		
 	}
 
