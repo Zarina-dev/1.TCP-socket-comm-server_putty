@@ -46,7 +46,7 @@ sockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 ```
 * using string local IP address
 
-*for it we need to #include <WS2tcpip.h> 
+*for it we need to #include <WS2tcpip.h>* 
 ```
 const char* IP = "127.0.0.1";
 sockaddr_in sockAddr;
